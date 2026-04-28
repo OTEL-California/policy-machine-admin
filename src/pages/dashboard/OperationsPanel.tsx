@@ -1,7 +1,7 @@
 import React from 'react';
 import { ActionIcon, Text, Tooltip, useMantineTheme } from '@mantine/core';
 import { IconX } from '@tabler/icons-react';
-import { renderTabContent, TOOLBAR_CONFIG, RightPanelComponent, Tab } from '@/pages/dashboard/RightPanel';
+import { renderTabContent, TOOLBAR_CONFIG, RightPanelComponent, Tab } from '@/pages/dashboard/NodeInfoPanel';
 import { TreeNode } from '@/features/pmtree/tree-utils';
 
 export type BottomPanelProps = {
@@ -10,7 +10,7 @@ export type BottomPanelProps = {
 	onClose: () => void;
 };
 
-export function BottomPanel({ activeComp, selectedNodes, onClose }: BottomPanelProps) {
+export function OperationsPanel({ activeComp, selectedNodes, onClose }: BottomPanelProps) {
 	const theme = useMantineTheme();
 	const entry = TOOLBAR_CONFIG.find((c) => c.comp === activeComp);
 
