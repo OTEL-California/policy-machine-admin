@@ -1,43 +1,19 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  ActionIcon,
-  Box,
-  Button,
-  Center,
-  Code, Divider,
-  Group,
-  Loader,
-  Modal,
-  NavLink,
-  NumberInput,
-  ScrollArea,
-  Stack,
-  Switch,
-  Text,
-  Textarea,
-  TextInput,
-  Title,
-} from "@mantine/core";
-import { ListDetailPanel } from "@/components/ListDetailPanel";
+import { IconEdit, IconFunction, IconPlus, IconShieldCog, IconTrash, IconX } from "@tabler/icons-react";
+import { ActionIcon, Box, Button, Center, Code, Divider, Group, Loader, Modal, NavLink, NumberInput, ScrollArea, Stack, Switch, Text, Textarea, TextInput, Title } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import {
-  IconEdit,
-  IconFunction,
-  IconPlus,
-  IconShieldCog,
-  IconTrash,
-  IconX
-} from "@tabler/icons-react";
-import { ParamType, Signature, OperationType as ProtoOperationType } from "@/shared/api/pdp.types";
-import { Param } from "@/generated/grpc/v1/pdp_query";
-import * as QueryService from "@/shared/api/pdp_query.api";
-import * as AdjudicationService from "@/shared/api/pdp_adjudication.api";
-import { PMLEditor } from "@/features/pml/PMLEditor";
 import { AdminOperationIcon } from "@/components/icons/AdminOperationIcon";
-import { ResourceOperationIcon } from "@/components/icons/ResourceOperationIcon";
-import { QueryOperationIcon } from "@/components/icons/QueryOperationIcon";
-import { RoutineIcon } from "@/components/icons/RoutineIcon";
 import { FunctionIcon } from "@/components/icons/FunctionIcon";
+import { QueryOperationIcon } from "@/components/icons/QueryOperationIcon";
+import { ResourceOperationIcon } from "@/components/icons/ResourceOperationIcon";
+import { RoutineIcon } from "@/components/icons/RoutineIcon";
+import { ListDetailPanel } from "@/components/ListDetailPanel";
+import { PMLEditor } from "@/features/pml/PMLEditor";
+import { Param } from "@/generated/grpc/v1/pdp_query";
+import * as AdjudicationService from "@/shared/api/pdp_adjudication.api";
+import * as QueryService from "@/shared/api/pdp_query.api";
+import { ParamType, OperationType as ProtoOperationType, Signature } from "@/shared/api/pdp.types";
+
 
 type OperationType = "admin" | "resource" | "query" | "routine" | "function";
 
@@ -291,7 +267,7 @@ export function Operations({ initialMode = "admin" }: OperationsProps) {
 
     const searchText = filterText.toLowerCase();
     return signatures.filter(sig =>
-        sig.name?.toLowerCase().includes(searchText)
+      sig.name?.toLowerCase().includes(searchText)
     );
   }, [signatures, filterText]);
 
@@ -302,176 +278,176 @@ export function Operations({ initialMode = "admin" }: OperationsProps) {
   }, [signatures, selectedOperation]);
 
   const headerButtons = mode === "resource" ? (
-      <Button
-          variant="filled"
-          color="var(--mantine-primary-color-filled)"
-          onClick={handleOpenResourceARModal}
-          leftSection={<IconEdit size={18} />}
-      >
-        Set Resource Access Rights
-      </Button>
+    <Button
+      variant="filled"
+      color="var(--mantine-primary-color-filled)"
+      onClick={handleOpenResourceARModal}
+      leftSection={<IconEdit size={18} />}
+    >
+      Set Resource Access Rights
+    </Button>
   ) : undefined;
 
   const listContent = (
-      <>
-        {signatures.length === 0 && !isCreatingNew ? (
-            <Box p="md">
-              <Text size="sm" c="dimmed">No {getOperationTypeLabel(mode).toLowerCase()} found.</Text>
-            </Box>
-        ) : null}
+    <>
+      {signatures.length === 0 && !isCreatingNew ? (
+        <Box p="md">
+          <Text size="sm" c="dimmed">No {getOperationTypeLabel(mode).toLowerCase()} found.</Text>
+        </Box>
+      ) : null}
 
-        {signatures.length > 0 && filteredSignatures.length === 0 && filterText.trim() ? (
-            <Box p="md">
-              <Text size="sm" c="dimmed">No matches found.</Text>
-            </Box>
-        ) : null}
+      {signatures.length > 0 && filteredSignatures.length === 0 && filterText.trim() ? (
+        <Box p="md">
+          <Text size="sm" c="dimmed">No matches found.</Text>
+        </Box>
+      ) : null}
 
-        {filteredSignatures.map((signature) => (
-            <NavLink
-                key={signature.name}
-                label={signature.name || "(unnamed)"}
-                leftSection={getOperationIcon(mode)}
-                active={selectedOperation === signature.name && !isCreatingNew}
-                onClick={() => handleSelectOperation(signature.name || "")}
-            />
-        ))}
-      </>
+      {filteredSignatures.map((signature) => (
+        <NavLink
+          key={signature.name}
+          label={signature.name || "(unnamed)"}
+          leftSection={getOperationIcon(mode)}
+          active={selectedOperation === signature.name && !isCreatingNew}
+          onClick={() => handleSelectOperation(signature.name || "")}
+        />
+      ))}
+    </>
   );
 
   const detailContent = isCreatingNew ? (
-      <Box style={{ height: '100%', display: 'flex', flexDirection: 'column', padding: '0 10px 10px 10px' }}>
-        <Group mb="md" justify="space-between">
-          <Title order={5}>Create New {getOperationTypeLabel(mode).slice(0, -1)}</Title>
-          <Button variant="default" size="xs" onClick={() => setIsCreatingNew(false)}>
-            Cancel
-          </Button>
-        </Group>
-        <Box style={{ flex: 1, minHeight: 0 }}>
-          <PMLEditor
-              onExecute={handleCreateOperation}
-              containerHeight="100%"
-              autoFocus
-          />
-        </Box>
+    <Box style={{ height: '100%', display: 'flex', flexDirection: 'column', padding: '0 10px 10px 10px' }}>
+      <Group mb="md" justify="space-between">
+        <Title order={5}>Create New {getOperationTypeLabel(mode).slice(0, -1)}</Title>
+        <Button variant="default" size="xs" onClick={() => setIsCreatingNew(false)}>
+          Cancel
+        </Button>
+      </Group>
+      <Box style={{ flex: 1, minHeight: 0 }}>
+        <PMLEditor
+          onExecute={handleCreateOperation}
+          containerHeight="100%"
+          autoFocus
+        />
       </Box>
+    </Box>
   ) : currentSignature ? (
-      <Box p="md" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-        <Group mb="md">
-          {getOperationIcon(mode, 24)}
-          <Title order={5}>{currentSignature.name}</Title>
-        </Group>
-        <Divider />
-        <Box style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
-          <OperationDetails
-              signature={currentSignature}
-              mode={mode}
-              getOperationTypeLabel={getOperationTypeLabel}
-              onDelete={handleDeleteSuccess}
-          />
-        </Box>
+    <Box p="md" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Group mb="md">
+        {getOperationIcon(mode, 24)}
+        <Title order={5}>{currentSignature.name}</Title>
+      </Group>
+      <Divider />
+      <Box style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
+        <OperationDetails
+          signature={currentSignature}
+          mode={mode}
+          getOperationTypeLabel={getOperationTypeLabel}
+          onDelete={handleDeleteSuccess}
+        />
       </Box>
+    </Box>
   ) : (
-      <Center style={{ height: '100%' }}>
-        <Stack align="center" gap="xs">
-          {getOperationIcon(mode, 48, "grey")}
-          <Text c="dimmed" size="sm">Select an operation to view details</Text>
-        </Stack>
-      </Center>
+    <Center style={{ height: '100%' }}>
+      <Stack align="center" gap="xs">
+        {getOperationIcon(mode, 48, "grey")}
+        <Text c="dimmed" size="sm">Select an operation to view details</Text>
+      </Stack>
+    </Center>
   );
 
   return (
-      <>
-        <ListDetailPanel
-            title={getOperationTypeLabel(mode)}
-            onCreateClick={handleCreateNew}
-            isCreatingNew={isCreatingNew}
-            headerButtons={headerButtons}
-            filterText={filterText}
-            onFilterChange={setFilterText}
-            onRefresh={loadSignatures}
-            refreshDisabled={loading}
-            listContent={listContent}
-            detailContent={detailContent}
-            loading={loading}
-        />
+    <>
+      <ListDetailPanel
+        title={getOperationTypeLabel(mode)}
+        onCreateClick={handleCreateNew}
+        isCreatingNew={isCreatingNew}
+        headerButtons={headerButtons}
+        filterText={filterText}
+        onFilterChange={setFilterText}
+        onRefresh={loadSignatures}
+        refreshDisabled={loading}
+        listContent={listContent}
+        detailContent={detailContent}
+        loading={loading}
+      />
 
-        {/* Resource Access Rights Modal */}
-        <Modal
-            opened={resourceARModalOpen}
-            onClose={() => setResourceARModalOpen(false)}
-            title="Resource Access Rights"
-            size="lg"
-        >
-          {resourceARLoading ? (
-              <Center py="xl">
-                <Loader />
-              </Center>
-          ) : (
-              <Stack gap="md">
-                <Group>
-                  <TextInput
-                      placeholder="New access right name"
-                      value={newAccessRight}
-                      onChange={(e) => setNewAccessRight(e.currentTarget.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") handleAddAccessRight();
-                      }}
-                      style={{ flex: 1 }}
-                  />
-                  <Button
-                      leftSection={<IconPlus size={16} />}
-                      onClick={handleAddAccessRight}
-                      disabled={!newAccessRight.trim()}
-                  >
-                    Add
-                  </Button>
-                </Group>
+      {/* Resource Access Rights Modal */}
+      <Modal
+        opened={resourceARModalOpen}
+        onClose={() => setResourceARModalOpen(false)}
+        title="Resource Access Rights"
+        size="lg"
+      >
+        {resourceARLoading ? (
+          <Center py="xl">
+            <Loader />
+          </Center>
+        ) : (
+          <Stack gap="md">
+            <Group>
+              <TextInput
+                placeholder="New access right name"
+                value={newAccessRight}
+                onChange={(e) => setNewAccessRight(e.currentTarget.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleAddAccessRight();
+                }}
+                style={{ flex: 1 }}
+              />
+              <Button
+                leftSection={<IconPlus size={16} />}
+                onClick={handleAddAccessRight}
+                disabled={!newAccessRight.trim()}
+              >
+                Add
+              </Button>
+            </Group>
 
-                <Divider />
+            <Divider />
 
-                {resourceAccessRights.length === 0 ? (
-                    <Text size="sm" c="dimmed" ta="center" py="md">
-                      No resource access rights defined.
-                    </Text>
-                ) : (
-                    <ScrollArea.Autosize mah={400}>
-                      <Stack gap={0}>
-                        {resourceAccessRights.map((right) => (
-                            <Group key={right} justify="space-between" px="xs" py={2}
-                                   style={{
-                                     borderBottom: '1px solid var(--mantine-color-gray-2)',
-                                   }}
-                            >
-                              <Text size="xs">{right}</Text>
-                              <ActionIcon
-                                  variant="subtle"
-                                  color="red"
-                                  size="sm"
-                                  onClick={() => handleRemoveAccessRight(right)}
-                              >
-                                <IconTrash size={14} />
-                              </ActionIcon>
-                            </Group>
-                        ))}
-                      </Stack>
-                    </ScrollArea.Autosize>
-                )}
+            {resourceAccessRights.length === 0 ? (
+              <Text size="sm" c="dimmed" ta="center" py="md">
+                No resource access rights defined.
+              </Text>
+            ) : (
+              <ScrollArea.Autosize mah={400}>
+                <Stack gap={0}>
+                  {resourceAccessRights.map((right) => (
+                    <Group key={right} justify="space-between" px="xs" py={2}
+                           style={{
+                             borderBottom: '1px solid var(--mantine-color-gray-2)',
+                           }}
+                    >
+                      <Text size="xs">{right}</Text>
+                      <ActionIcon
+                        variant="subtle"
+                        color="red"
+                        size="sm"
+                        onClick={() => handleRemoveAccessRight(right)}
+                      >
+                        <IconTrash size={14} />
+                      </ActionIcon>
+                    </Group>
+                  ))}
+                </Stack>
+              </ScrollArea.Autosize>
+            )}
 
-                <Group justify="flex-end" mt="md">
-                  <Button variant="default" onClick={() => setResourceARModalOpen(false)}>
-                    Cancel
-                  </Button>
-                  <Button
-                      onClick={handleSaveResourceAccessRights}
-                      loading={resourceARSaving}
-                  >
-                    Set Access Rights
-                  </Button>
-                </Group>
-              </Stack>
-          )}
-        </Modal>
-      </>
+            <Group justify="flex-end" mt="md">
+              <Button variant="default" onClick={() => setResourceARModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSaveResourceAccessRights}
+                loading={resourceARSaving}
+              >
+                Set Access Rights
+              </Button>
+            </Group>
+          </Stack>
+        )}
+      </Modal>
+    </>
   );
 }
 
@@ -483,26 +459,22 @@ interface OperationDetailsProps {
 }
 
 function OperationDetails({ signature, mode, getOperationTypeLabel, onDelete }: OperationDetailsProps) {
-  const [formValues, setFormValues] = useState<Record<string, any>>({});
+  const [jsonInput, setJsonInput] = useState("{}");
   const [submitting, setSubmitting] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [returnValue, setReturnValue] = useState<any>(null);
 
   useEffect(() => {
-    const nextValues: Record<string, any> = {};
+    const defaultValues: Record<string, any> = {};
     for (const param of signature.params ?? []) {
-      nextValues[param.name] = createDefaultValueForParamType(getParamType(param));
+      if (param.name) {
+        defaultValues[param.name] = createDefaultValueForParamType(getParamType(param));
+      }
     }
-    setFormValues(nextValues);
+    setJsonInput(JSON.stringify(defaultValues, null, 2)); // Pretty print with 2 spaces
     setReturnValue(null); // Clear return value when signature changes
   }, [signature]);
 
-  const handleParamChange = (paramName: string, value: any) => {
-    setFormValues((prev) => ({
-      ...prev,
-      [paramName]: value,
-    }));
-  };
 
   const handleExecute = async () => {
     if (!signature.name) {
@@ -514,12 +486,28 @@ function OperationDetails({ signature, mode, getOperationTypeLabel, onDelete }: 
       return;
     }
 
+    let parsed: Record<string, any>;
+    try {
+      parsed = JSON.parse(jsonInput);
+      if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+        throw new Error('Input must be a JSON object');
+      }
+    } catch (e) {
+      notifications.show({
+        color: "red",
+        title: "Invalid JSON",
+        message: e instanceof Error ? e.message : "Failed to parse JSON",
+      });
+      return;
+    }
+
     const args: Record<string, any> = {};
     for (const param of signature.params ?? []) {
+      const value = parsed[param.name];
       const conversion = convertValueForSubmission(
-          param.name,
-          getParamType(param),
-          formValues[param.name],
+        param.name,
+        getParamType(param),
+        value,
       );
       if (conversion.error) {
         notifications.show({
@@ -537,8 +525,8 @@ function OperationDetails({ signature, mode, getOperationTypeLabel, onDelete }: 
     setSubmitting(true);
     try {
       const response = mode === "resource"
-          ? await AdjudicationService.adjudicateResourceOperation(signature.name, args)
-          : await AdjudicationService.adjudicateOperation(signature.name, args);
+        ? await AdjudicationService.adjudicateResourceOperation(signature.name, args)
+        : await AdjudicationService.adjudicateOperation(signature.name, args);
 
       // Store return value if present, unwrapping the protobuf Value structure
       if (response?.value !== undefined && response?.value !== null) {
@@ -599,296 +587,67 @@ function OperationDetails({ signature, mode, getOperationTypeLabel, onDelete }: 
   };
 
   return (
-      <Stack gap="sm" style={{ height: '100%', minHeight: 0 }}>
-        {(signature.params?.length ?? 0) > 0 ? (
-            <Box style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
-              <ScrollArea style={{ flex: 1 }}>
-                <Stack gap="md" style={{padding: '4px'}}>
-                  {signature.params?.map((param, index) => {
-                    const displayName = param.name && param.name.length > 0 ? param.name : `Parameter ${index + 1}`;
-                    const typeLabel = getParamKindLabel(param);
-                    return (
-                        <Box
-                            key={param.name || `param-${index}`}
-                            style={{
-                              borderBottom: '1px solid var(--mantine-color-gray-3)',
-                              paddingBottom: 'var(--mantine-spacing-md)',
-                            }}
-                        >
-                          <Text fw={600} size="sm" mb={4}>
-                            {displayName} | {typeLabel}
-                          </Text>
-                          <ParamField
-                              name=""
-                              type={getParamType(param)}
-                              value={formValues[param.name]}
-                              onChange={(value) => handleParamChange(param.name, value)}
-                          />
-                        </Box>
-                    );
-                  })}
-                </Stack>
-              </ScrollArea>
-            </Box>
-        ) : (
-            <Box py="sm">
-              <Text size="sm" c="dimmed">
-                This {getOperationTypeLabel(mode).toLowerCase().replace(/s$/, '')} has no parameters.
-              </Text>
-            </Box>
-        )}
-        <Group justify="flex-end">
-          <Button
-              leftSection={<IconTrash size={16} />}
-              onClick={handleDelete}
-              loading={deleting}
-              disabled={submitting}
-              color="red"
-              variant="outline"
-          >
-            Delete
-          </Button>
-          <Button
-              leftSection={<IconFunction size={16} />}
-              onClick={handleExecute}
-              loading={submitting}
-              disabled={deleting}
-          >
-            Execute
-          </Button>
-        </Group>
-
-        {/* Display return value if present */}
-        {returnValue !== null && returnValue !== undefined && (
-            <Box mt="md" p="md" style={{
-              border: '1px solid var(--mantine-color-gray-3)',
-              borderRadius: '4px',
-              backgroundColor: 'var(--mantine-color-gray-0)'
-            }}>
-              <Title order={6} mb="xs">Return Value</Title>
-              <Code block style={{
-                maxHeight: '300px',
-                overflow: 'auto',
-                fontSize: '12px',
-                whiteSpace: 'pre-wrap'
-              }}>
-                {JSON.stringify(returnValue, null, 2)}
-              </Code>
-            </Box>
-        )}
-      </Stack>
-  );
-}
-
-interface ParamFieldProps {
-  name: string;
-  type?: ParamType | null;
-  value: any;
-  onChange: (value: any) => void;
-  depth?: number;
-}
-
-function ParamField({ name, type, value, onChange, depth = 0 }: ParamFieldProps) {
-  const kind = getParamTypeKind(type);
-  const indent = depth > 0 ? depth * 12 : 0;
-  const label = name && name.length > 0 ? name : undefined;
-
-  if (kind === "string") {
-    return (
-        <Box style={{ marginLeft: indent }}>
-          <Textarea
-              label={label}
-              value={typeof value === "string" ? value : ""}
-              onChange={(event) => onChange(event.currentTarget.value)}
-              placeholder="Enter text"
-              autosize
-              minRows={2}
-              maxRows={6}
-          />
+    <Stack gap="sm" style={{ height: '100%', minHeight: 0 }}>
+      {(signature.params?.length ?? 0) > 0 ? (
+        <Box style={{ display: 'flex', flexDirection: 'row', height: '100%', gap: 'md' }}>
+          <Box style={{height: "100%", width: "30%", display: 'flex', flexDirection: 'column'}}>
+            <Title order={6}>Input Schema</Title>
+            <Code block style={{ flex: 1, minHeight: 0, whiteSpace: 'pre-wrap' }}>{generatePMLTypeSchemaString(signature.params ?? [])}</Code>
+          </Box>
+          <Box style={{ backgroundColor: "green", height: "100%", width: "70%"}}>
+            <Textarea
+              label="Input JSON"
+              value={jsonInput}
+              onChange={(e) => setJsonInput(e.currentTarget.value)}
+              style={{ height: '100%' }}
+            />
+            <Group mt="mb" justify="flex-end" wrap="wrap">
+              <Button
+                leftSection={<IconTrash size={16} />}
+                onClick={handleDelete}
+                loading={deleting}
+                disabled={submitting}
+                color="red"
+                variant="outline"
+              >
+                Delete
+              </Button>
+              <Button
+                leftSection={<IconFunction size={16} />}
+                onClick={handleExecute}
+                loading={submitting}
+                disabled={deleting}
+              >
+                Execute
+              </Button>
+            </Group>
+          </Box>
         </Box>
-    );
-  }
-
-  if (kind === "long") {
-    return (
-        <Box style={{ marginLeft: indent }}>
-          <NumberInput
-              label={label}
-              value={value === "" || value === undefined || value === null ? "" : Number(value)}
-              onChange={(val) => onChange(val === "" ? "" : Number(val))}
-              allowNegative
-          />
+      ) : (
+        <Box py="sm">
+          <Text size="sm" c="dimmed">
+            This {getOperationTypeLabel(mode).toLowerCase().replace(/s$/, '')} has no parameters.
+          </Text>
         </Box>
-    );
-  }
-
-  if (kind === "boolean") {
-    return (
-        <Box style={{ marginLeft: indent }}>
-          <Switch
-              label={label}
-              checked={Boolean(value)}
-              labelPosition="left"
-              onChange={(event) => onChange(event.currentTarget.checked)}
-          />
+      )}
+      {returnValue !== null && returnValue !== undefined && (
+        <Box mt="md" p="md" style={{
+          border: '1px solid var(--mantine-color-gray-3)',
+          borderRadius: '4px',
+          backgroundColor: 'var(--mantine-color-gray-0)'
+        }}>
+          <Title order={6} mb="xs">Return Value</Title>
+          <Code block style={{
+            maxHeight: '300px',
+            overflow: 'auto',
+            fontSize: '12px',
+            whiteSpace: 'pre-wrap'
+          }}>
+            {JSON.stringify(returnValue, null, 2)}
+          </Code>
         </Box>
-    );
-  }
-
-  if (kind === "any") {
-    return (
-        <Box style={{ marginLeft: indent }}>
-          <Textarea
-              label={label ? `${label} (JSON)` : "JSON"}
-              autosize
-              minRows={3}
-              placeholder='Enter JSON, e.g. { "key": "value" }'
-              value={typeof value === "string" ? value : ""}
-              onChange={(event) => onChange(event.currentTarget.value)}
-          />
-        </Box>
-    );
-  }
-
-  if (kind === "list") {
-    const items: any[] = Array.isArray(value) ? [...value] : [];
-    const elementType = type?.listType?.elementType;
-    const title = label ?? "Items";
-    return (
-        <Box style={{ marginLeft: indent }}>
-          <Text fw={500} mb="xs">{title}</Text>
-          {items.length === 0 ? (
-              <Text size="xs" c="dimmed">
-                No items
-              </Text>
-          ) : (
-              <Stack gap="xs">
-                {items.map((item, index) => (
-                    <Box
-                        key={index}
-                        style={{
-                          border: "1px solid var(--mantine-color-gray-3)",
-                          borderRadius: "4px",
-                          padding: "8px",
-                          paddingRight: "36px",
-                          position: "relative",
-                        }}
-                    >
-                      <ActionIcon
-                          size="sm"
-                          variant="subtle"
-                          onClick={() => onChange(items.filter((_, idx) => idx !== index))}
-                          style={{ position: "absolute", top: 6, right: 6 }}
-                      >
-                        <IconX size={14} color="red" />
-                      </ActionIcon>
-                      <ParamField
-                          name={`Item ${index + 1}`}
-                          type={elementType}
-                          value={item}
-                          onChange={(childValue) => {
-                            const nextValues = [...items];
-                            nextValues[index] = childValue;
-                            onChange(nextValues);
-                          }}
-                          depth={depth + 1}
-                      />
-                    </Box>
-                ))}
-              </Stack>
-          )}
-          <Button
-              mt="sm"
-              variant="light"
-              size="xs"
-              leftSection={<IconPlus size={14} />}
-              onClick={() =>
-                  onChange([...items, createDefaultValueForParamType(elementType)])
-              }
-          >
-            Add item
-          </Button>
-        </Box>
-    );
-  }
-
-  const entries: MapEntryValue[] = Array.isArray(value)
-      ? [...(value as MapEntryValue[])]
-      : [];
-  const mapType = type?.mapType;
-  const addEntry = () => {
-    onChange([
-      ...entries,
-      createDefaultMapEntry(mapType),
-    ]);
-  };
-  const title = label ?? "Entries";
-  return (
-      <Box style={{ marginLeft: indent }}>
-        <Text fw={500} mb="xs">{title}</Text>
-        {entries.length === 0 ? (
-            <Text size="xs" c="dimmed">
-              No entries
-            </Text>
-        ) : (
-            <Stack gap="xs">
-              {entries.map((entry, index) => (
-                  <Box
-                      key={index}
-                      style={{
-                        border: "1px solid var(--mantine-color-gray-3)",
-                        borderRadius: "4px",
-                        padding: "8px",
-                        paddingRight: "36px",
-                        position: "relative",
-                      }}
-                  >
-                    <ActionIcon
-                        size="sm"
-                        variant="subtle"
-                        onClick={() => onChange(entries.filter((_, idx) => idx !== index))}
-                        style={{ position: "absolute", top: 6, right: 6 }}
-                    >
-                      <IconX size={14} color="red" />
-                    </ActionIcon>
-                    <Stack gap="xs">
-                      <ParamField
-                          name="Key"
-                          type={mapType?.keyType}
-                          value={entry.key}
-                          onChange={(newKey) => {
-                            const next = [...entries];
-                            next[index] = { ...entry, key: newKey };
-                            onChange(next);
-                          }}
-                          depth={depth + 1}
-                      />
-                      <ParamField
-                          name="Value"
-                          type={mapType?.valueType}
-                          value={entry.value}
-                          onChange={(newValue) => {
-                            const next = [...entries];
-                            next[index] = { ...entry, value: newValue };
-                            onChange(next);
-                          }}
-                          depth={depth + 1}
-                      />
-                    </Stack>
-                  </Box>
-              ))}
-            </Stack>
-        )}
-        <Button
-            mt="sm"
-            variant="outline"
-            size="xs"
-            leftSection={<IconPlus size={14} />}
-            onClick={addEntry}
-        >
-          Add entry
-        </Button>
-      </Box>
+      )}
+    </Stack>
   );
 }
 
@@ -937,6 +696,55 @@ function formatParamTypeLabel(paramType?: ParamType | null): string {
   }
 }
 
+function formatPMLType(paramType?: ParamType | null): string {
+  const kind = getParamTypeKind(paramType);
+  switch (kind) {
+    case "string":
+      return "string";
+    case "long":
+      return "long";
+    case "boolean":
+      return "boolean";
+    case "list": {
+      const elementType = paramType?.listType?.elementType;
+      const elementPML = formatPMLType(elementType);
+      return `[]${elementPML}`;
+    }
+    case "map": {
+      const keyType = paramType?.mapType?.keyType;
+      const valueType = paramType?.mapType?.valueType;
+      const keyPML = formatPMLType(keyType);
+      const valuePML = formatPMLType(valueType);
+      return `map[${keyPML}]${valuePML}`;
+    }
+    case "any":
+    default:
+      return "any";
+  }
+}
+
+function generatePMLTypeSchemaString(params: Param[]): string {
+  const schema: Record<string, string> = {};
+  for (const param of params) {
+    if (!param.name) {
+      continue;
+    }
+    const paramType = getParamType(param);
+    schema[param.name] = formatPMLType(paramType);
+  }
+  const entries = Object.entries(schema);
+  if (entries.length === 0) {
+    return '{}';
+  }
+  let result = '{\n';
+  for (const [key, value] of entries) {
+    result += `  "${key}": ${value},\n`;
+  }
+  result = `${result.slice(0, -2)  }\n`; // remove last comma and newline
+  result += '}';
+  return result;
+}
+
 function createDefaultValueForParamType(paramType?: ParamType | null): any {
   const kind = getParamTypeKind(paramType);
   switch (kind) {
@@ -970,9 +778,9 @@ interface ConversionResult {
 }
 
 function convertValueForSubmission(
-    paramName: string,
-    paramType: ParamType | undefined,
-    rawValue: any,
+  paramName: string,
+  paramType: ParamType | undefined,
+  rawValue: any,
 ): ConversionResult {
   const kind = getParamTypeKind(paramType);
   switch (kind) {
@@ -1009,16 +817,16 @@ function convertValueForSubmission(
     }
     case "map": {
       const entries: MapEntryValue[] = Array.isArray(rawValue)
-          ? [...(rawValue as MapEntryValue[])]
-          : [];
+        ? [...(rawValue as MapEntryValue[])]
+        : [];
       const mapType = paramType?.mapType;
       const converted: Record<string, any> = {};
       for (let i = 0; i < entries.length; i += 1) {
         const entry = entries[i];
         const keyResult = convertValueForSubmission(
-            `${paramName}[${i}].key`,
-            mapType?.keyType,
-            entry?.key,
+          `${paramName}[${i}].key`,
+          mapType?.keyType,
+          entry?.key,
         );
         if (keyResult.error) {
           return { value: undefined, include: false, error: keyResult.error };
@@ -1038,9 +846,9 @@ function convertValueForSubmission(
           };
         }
         const valueResult = convertValueForSubmission(
-            `${paramName}[${i}].value`,
-            mapType?.valueType,
-            entry?.value,
+          `${paramName}[${i}].value`,
+          mapType?.valueType,
+          entry?.value,
         );
         if (valueResult.error) {
           return { value: undefined, include: false, error: valueResult.error };
