@@ -1,48 +1,39 @@
 import { queryClient } from '../App';
 
-// Auth token key in localStorage
 const AUTH_TOKEN_KEY = 'auth_token';
+const AUTH_ATTRS_KEY = 'auth_attrs';
 
-/**
- * AuthService provides centralized methods for authentication
- */
 export const AuthService = {
-  /**
-   * Login a user
-   * @param username The username to authenticate
-   */
-  login: (username: string): void => {
+  login: (username: string, attrs: string[] = []): void => {
     localStorage.setItem(AUTH_TOKEN_KEY, username);
+    localStorage.setItem(AUTH_ATTRS_KEY, JSON.stringify(attrs));
   },
 
-  /**
-   * Logout the current user and reset application state
-   * @param redirect If true, will force a full page reload
-   */
   logout: (redirect = false): void => {
-    // Clear auth data
     localStorage.removeItem(AUTH_TOKEN_KEY);
-    
-    // Reset all React Query caches
+    localStorage.removeItem(AUTH_ATTRS_KEY);
     queryClient.clear();
-    
-    // Optionally force a page reload to reset all state
     if (redirect) {
       window.location.href = '/login';
     }
   },
 
-  /**
-   * Check if a user is authenticated
-   */
   isAuthenticated: (): boolean => {
-    return localStorage.getItem(AUTH_TOKEN_KEY) !== null;
+    const username = localStorage.getItem(AUTH_TOKEN_KEY);
+    const attrs = AuthService.getAttributes();
+    return (username !== null && username !== '') || attrs.length > 0;
   },
 
-  /**
-   * Get the current username
-   */
   getUsername: (): string | null => {
     return localStorage.getItem(AUTH_TOKEN_KEY);
-  }
+  },
+
+  getAttributes: (): string[] => {
+    try {
+      const raw = localStorage.getItem(AUTH_ATTRS_KEY);
+      return raw ? (JSON.parse(raw) as string[]) : [];
+    } catch {
+      return [];
+    }
+  },
 }; 

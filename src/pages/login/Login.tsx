@@ -1,32 +1,27 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { TextInput, Button, Paper, Title, Container, Group, Stack } from '@mantine/core';
+import { TextInput, TagsInput, Button, Paper, Title, Container, Group, Stack } from '@mantine/core';
 import { PMIcon } from '@/components/icons/PMIcon';
 import { AuthService } from '@/lib/auth';
 
 export function Login() {
   const [username, setUsername] = useState('');
+  const [attrs, setAttrs] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Ensure we're logged out when visiting the login page
   AuthService.logout();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!username.trim()) {
+
+    if (!username.trim() && attrs.length === 0) {
       return;
     }
 
     setLoading(true);
-    
-    // Use the auth service to login
-    AuthService.login(username);
-    
-    // Navigate to the main page
+    AuthService.login(username.trim(), attrs);
     navigate('/');
-    
     setLoading(false);
   };
 
@@ -46,11 +41,19 @@ export function Login() {
             placeholder="Your username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            required
           />
-          
+
+          <TagsInput
+            label="User Attributes"
+            placeholder="Add an attribute and press Enter"
+            value={attrs}
+            onChange={(values) => setAttrs(values.map((v) => v.replace(/^["']|["']$/g, '')))}
+
+            mt="sm"
+          />
+
           <Group justify="flex-end" mt="xl">
-            <Button type="submit" loading={loading}>
+            <Button type="submit" loading={loading} disabled={!username.trim() && attrs.length === 0}>
               Sign in
             </Button>
           </Group>

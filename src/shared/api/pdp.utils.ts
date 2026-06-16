@@ -25,7 +25,7 @@ export function transformNode(node: Model.Node): PMNode {
 }
 
 export function createNodeRef(id: bigint): Model.NodeRef {
-  return Model.NodeRef.create({ id });
+  return { id };
 }
 
 export function transformAssociation(association: Model.Association): Association {
@@ -36,7 +36,8 @@ export function transformAssociation(association: Model.Association): Associatio
   };
 }
 
-export function argsToValueMap(args: Record<string, any>): Model.ValueMap {
+export function argsToValueMap(args: Record<string, any>): { [key: string]: Model.Value } {
+  console.log('[gRPC] argsToValueMap args:', JSON.stringify(args));
   const valueMap: { [key: string]: Model.Value } = {};
 
   const toModelValue = (value: any): Model.Value | undefined => {
@@ -94,7 +95,7 @@ export function argsToValueMap(args: Record<string, any>): Model.ValueMap {
     }
   }
 
-  return Model.ValueMap.create({ values: valueMap });
+  return valueMap;
 }
 
 class GrpcWebRpc {

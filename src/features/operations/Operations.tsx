@@ -446,7 +446,7 @@ export function Operations({ initialMode = "admin" }: OperationsProps) {
   ) : (
     <Center style={{ height: '100%' }}>
       <Stack align="center" gap="xs">
-        {getOperationIcon(mode, 48, "grey")}
+        {getOperationIcon(mode, 48, "gray")}
         <Text c="dimmed" size="sm">Select an operation to view details</Text>
       </Stack>
     </Center>

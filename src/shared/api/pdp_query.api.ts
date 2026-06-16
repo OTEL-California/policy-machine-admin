@@ -211,8 +211,8 @@ export async function getOperationSignature(name: string): Promise<PdpQuery.Sign
 
 export async function computePrivileges(userId: bigint, targetId: bigint): Promise<string[]> {
   const request = PdpQuery.ComputePrivilegesRequest.create({
-    userCtx: PdpQuery.UserContext.create({ userNode: createNodeRef(userId) }),
-    targetCtx: PdpQuery.TargetContext.create({ targetNode: createNodeRef(targetId) })
+    userCtx: PdpQuery.UserContext.create({ id: userId }),
+    targetCtx: PdpQuery.TargetContext.create({ id: targetId })
   });
   const response = await queryClient.computePrivileges(request);
   return response.privileges;
@@ -220,8 +220,8 @@ export async function computePrivileges(userId: bigint, targetId: bigint): Promi
 
 export async function computeDeniedPrivileges(userId: bigint, targetId: bigint): Promise<string[]> {
   const request = PdpQuery.ComputeDeniedPrivilegesRequest.create({
-    userCtx: PdpQuery.UserContext.create({ userNode: createNodeRef(userId) }),
-    targetCtx: PdpQuery.TargetContext.create({ targetNode: createNodeRef(targetId) })
+    userCtx: PdpQuery.UserContext.create({ id: userId }),
+    targetCtx: PdpQuery.TargetContext.create({ id: targetId })
   });
   const response = await queryClient.computeDeniedPrivileges(request);
   return response.privileges;
@@ -229,7 +229,7 @@ export async function computeDeniedPrivileges(userId: bigint, targetId: bigint):
 
 export async function computeCapabilityList(userId: bigint): Promise<NodePrivilegeInfo[]> {
   const request = PdpQuery.ComputeCapabilityListRequest.create({
-    userCtx: PdpQuery.UserContext.create({ userNode: createNodeRef(userId) })
+    userCtx: PdpQuery.UserContext.create({ id: userId })
   });
   const response = await queryClient.computeCapabilityList(request);
   return response.nodePrivileges.map((priv: PdpQuery.NodePrivileges) => ({
@@ -240,7 +240,7 @@ export async function computeCapabilityList(userId: bigint): Promise<NodePrivile
 
 export async function computeACL(targetId: bigint): Promise<NodePrivilegeInfo[]> {
   const request = PdpQuery.ComputeACLRequest.create({
-    targetCtx: PdpQuery.TargetContext.create({ targetNode: createNodeRef(targetId) })
+    targetCtx: PdpQuery.TargetContext.create({ id: targetId })
   });
   const response = await queryClient.computeACL(request);
   return response.nodePrivileges.map((priv: PdpQuery.NodePrivileges) => ({
@@ -251,7 +251,7 @@ export async function computeACL(targetId: bigint): Promise<NodePrivilegeInfo[]>
 
 export async function computeDestinationAttributes(userId: bigint): Promise<NodePrivilegeInfo[]> {
   const request = PdpQuery.ComputeDestinationAttributesRequest.create({
-    userCtx: PdpQuery.UserContext.create({ userNode: createNodeRef(userId) })
+    userCtx: PdpQuery.UserContext.create({ id: userId })
   });
   const response = await queryClient.computeDestinationAttributes(request);
   return response.nodePrivileges.map((priv: PdpQuery.NodePrivileges) => ({
@@ -262,8 +262,8 @@ export async function computeDestinationAttributes(userId: bigint): Promise<Node
 
 export async function computeSubgraphPrivileges(userId: bigint, rootId: bigint): Promise<PdpQuery.SubgraphPrivileges | undefined> {
   const request = PdpQuery.ComputeSubgraphPrivilegesRequest.create({
-    userCtx: PdpQuery.UserContext.create({ userNode: createNodeRef(userId) }),
-    root: createNodeRef(rootId)
+    userCtx: PdpQuery.UserContext.create({ id: userId }),
+    root: { id: rootId }
   });
   const response = await queryClient.computeSubgraphPrivileges(request);
   return response.subgraphPrivileges;
@@ -271,8 +271,8 @@ export async function computeSubgraphPrivileges(userId: bigint, rootId: bigint):
 
 export async function computeAdjacentAscendantPrivileges(userId: bigint, rootId: bigint): Promise<NodePrivilegeInfo[]> {
   const request = PdpQuery.ComputeAdjacentAscendantPrivilegesRequest.create({
-    userCtx: PdpQuery.UserContext.create({ userNode: createNodeRef(userId) }),
-    root: createNodeRef(rootId)
+    userCtx: PdpQuery.UserContext.create({ id: userId }),
+    root: { id: rootId }
   });
   const response = await queryClient.computeAdjacentAscendantPrivileges(request);
   return response.nodePrivileges.map((priv: PdpQuery.NodePrivileges) => ({
@@ -283,8 +283,8 @@ export async function computeAdjacentAscendantPrivileges(userId: bigint, rootId:
 
 export async function computeAdjacentDescendantPrivileges(userId: bigint, rootId: bigint): Promise<NodePrivilegeInfo[]> {
   const request = PdpQuery.ComputeAdjacentDescendantPrivilegesRequest.create({
-    userCtx: PdpQuery.UserContext.create({ userNode: createNodeRef(userId) }),
-    root: createNodeRef(rootId)
+    userCtx: PdpQuery.UserContext.create({ id: userId }),
+    root: { id: rootId }
   });
   const response = await queryClient.computeAdjacentDescendantPrivileges(request);
   return response.nodePrivileges.map((priv: PdpQuery.NodePrivileges) => ({
@@ -295,15 +295,15 @@ export async function computeAdjacentDescendantPrivileges(userId: bigint, rootId
 
 export async function explain(userId: bigint, targetId: bigint): Promise<PdpQuery.ExplainResponse> {
   const request = PdpQuery.ExplainRequest.create({
-    userCtx: PdpQuery.UserContext.create({ userNode: createNodeRef(userId) }),
-    targetCtx: PdpQuery.TargetContext.create({ targetNode: createNodeRef(targetId) })
+    userCtx: PdpQuery.UserContext.create({ id: userId }),
+    targetCtx: PdpQuery.TargetContext.create({ id: targetId })
   });
   return queryClient.explain(request);
 }
 
 export async function computePersonalObjectSystem(userId: bigint): Promise<NodePrivilegeInfo[]> {
   const request = PdpQuery.ComputePersonalObjectSystemRequest.create({
-    userCtx: PdpQuery.UserContext.create({ userNode: createNodeRef(userId) })
+    userCtx: PdpQuery.UserContext.create({ id: userId })
   });
   const response = await queryClient.computePersonalObjectSystem(request);
   return response.nodePrivileges.map((priv: PdpQuery.NodePrivileges) => ({
@@ -316,7 +316,7 @@ export async function computePersonalObjectSystem(userId: bigint): Promise<NodeP
 
 export async function selfComputePrivileges(targetId: bigint): Promise<string[]> {
   const request = PdpQuery.SelfComputePrivilegesRequest.create({
-    targetCtx: PdpQuery.TargetContext.create({ targetNode: createNodeRef(targetId) })
+    targetCtx: PdpQuery.TargetContext.create({ id: targetId })
   });
   const response = await queryClient.selfComputePrivileges(request);
   return response.privileges;

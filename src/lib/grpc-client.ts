@@ -17,6 +17,10 @@ export const getRequestMetadata = (): grpc.Metadata => {
   if (username) {
     metadata.set('x-pm-user', username);
   }
+  const attrs = AuthService.getAttributes();
+  if (attrs.length > 0) {
+    metadata.set('x-pm-user-attrs', JSON.stringify(attrs));
+  }
   return metadata;
 };
 

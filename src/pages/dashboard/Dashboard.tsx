@@ -823,8 +823,11 @@ export function Dashboard() {
                         value={newNodeName}
                         onChange={(e) => setNewNodeName(e.target.value)}
                         onKeyDown={(e) => {
-                            if (e.key === 'Enter' && newNodeName.trim()) {
-                                handleCreateNodeConfirm();
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                if (newNodeName.trim()) {
+                                    handleCreateNodeConfirm();
+                                }
                             }
                         }}
                         data-autofocus
