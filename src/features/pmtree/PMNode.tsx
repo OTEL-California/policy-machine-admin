@@ -20,6 +20,35 @@ import {
 	shouldShowExpansionIcon,
 	truncateMiddle, TreeNode
 } from "@/features/pmtree/tree-utils";
+import * as QueryService from "@/shared/api/pdp_query.api";
+
+// Module-level cache so PC memberships are only fetched once per session per node.
+const pcCache = new Map<string, string[]>();
+
+// BFS up the ascendant graph until PC nodes are found (up to 8 hops).
+async function fetchPCsForNode(pmId: bigint): Promise<string[]> {
+	const pcs: string[] = [];
+	const visited = new Set<string>();
+	let frontier = [pmId];
+	for (let depth = 0; depth < 8 && frontier.length > 0; depth++) {
+		const next: bigint[] = [];
+		for (const id of frontier) {
+			const key = String(id);
+			if (visited.has(key)) continue;
+			visited.add(key);
+			try {
+				const parents = await QueryService.getAdjacentDescendants(id);
+				for (const p of parents) {
+					if (p.type === 'PC') pcs.push(p.name);
+					else next.push(p.id);
+				}
+			} catch { /* skip */ }
+		}
+		if (pcs.length > 0) break;
+		frontier = next;
+	}
+	return [...new Set(pcs)].sort();
+}
 
 export interface PMNodeProps extends NodeRendererProps<TreeNode> {
 	clickHandlers?: PMTreeClickHandlers;
@@ -34,6 +63,25 @@ export function PMNode({ node, style, tree, clickHandlers, direction, treeDataAt
 	const theme = useMantineTheme();
 	const [filterConfig] = useAtom(filterConfigAtom);
 	const { toggleNodeWithData } = usePMTreeOperations(treeDataAtom, direction, filterConfig);
+
+	const [pcBadges, setPcBadges] = useState<string[]>(() => {
+		if (!node.data.pmId || node.data.type === 'PC' || node.data.isAssociation) return [];
+		return pcCache.get(String(node.data.pmId)) ?? [];
+	});
+
+	useEffect(() => {
+		const { pmId, type, isAssociation } = node.data;
+		if (!pmId || type === 'PC' || isAssociation) return;
+		const key = String(pmId);
+		if (pcCache.has(key)) {
+			setPcBadges(pcCache.get(key)!);
+			return;
+		}
+		fetchPCsForNode(pmId).then(pcs => {
+			pcCache.set(key, pcs);
+			setPcBadges(pcs);
+		});
+	}, [node.data.pmId, node.data.type, node.data.isAssociation]);
 
 	const handleExpansionClick = async (e: React.MouseEvent) => {
 		e.preventDefault();
@@ -144,6 +192,24 @@ export function PMNode({ node, style, tree, clickHandlers, direction, treeDataAt
 						{truncatedName}
 					</span>
 				</Tooltip>
+				{pcBadges.map(pc => (
+					<span key={pc} style={{
+						display: 'inline-flex',
+						alignItems: 'center',
+						fontSize: '10px',
+						lineHeight: '16px',
+						padding: '0 4px',
+						borderRadius: 3,
+						backgroundColor: 'var(--mantine-color-green-0)',
+						color: 'var(--mantine-color-green-9)',
+						border: '1px solid var(--mantine-color-green-9)',
+						fontWeight: 600,
+						whiteSpace: 'nowrap',
+						flexShrink: 0,
+					}}>
+						{pc}
+					</span>
+				))}
 			</div>
 		);
 	};
