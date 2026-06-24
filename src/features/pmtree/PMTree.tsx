@@ -47,6 +47,7 @@ export interface PMTreeProps {
     overscanCount?: number;
 
     // Toolbar visibility controls
+    showSelectedNodeLabel?: boolean;
     showReset?: boolean;
     showCreatePolicyClass?: boolean;
     showTreeFilters?: boolean;
@@ -312,7 +313,7 @@ export function PMTree(props: PMTreeProps) {
                         minWidth: 0,
                     }}>
                         {internalToolbar}
-                        <SelectedNodeLabel node={selectedNode} />
+                        {(props.showSelectedNodeLabel ?? true) && <SelectedNodeLabel node={selectedNode} />}
                         <FillFlexParent>
                             {({ width, height }) => {
                                 // Show error state with retry option
@@ -352,7 +353,7 @@ export function PMTree(props: PMTreeProps) {
                                         height={height}
                                         indent={INDENT_NUM}
                                         rowHeight={props.rowHeight ?? 28}
-                                        overscanCount={props.overscanCount ?? 20}
+                                        overscanCount={props.overscanCount ?? 5}
                                         onSelect={handleSelect}
                                         disableMultiSelection={props.disableMultiSelection ?? true}
                                     >

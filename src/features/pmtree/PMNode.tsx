@@ -77,10 +77,20 @@ export function PMNode({ node, style, tree, clickHandlers, direction, treeDataAt
 			setPcBadges(pcCache.get(key)!);
 			return;
 		}
-		fetchPCsForNode(pmId).then(pcs => {
-			pcCache.set(key, pcs);
-			setPcBadges(pcs);
+		// Deferred off the mount frame: a freshly-expanded accordion panel can mount
+		// dozens of rows at once (see fill-flex-parent.tsx), and firing every row's
+		// BFS lookup synchronously on mount contends with that expand animation.
+		const idle = (cb: () => void) =>
+			typeof requestIdleCallback === 'function' ? requestIdleCallback(cb) : setTimeout(cb, 0);
+		let cancelled = false;
+		idle(() => {
+			if (cancelled) { return; }
+			fetchPCsForNode(pmId).then(pcs => {
+				pcCache.set(key, pcs);
+				if (!cancelled) { setPcBadges(pcs); }
+			});
 		});
+		return () => { cancelled = true; };
 	}, [node.data.pmId, node.data.type, node.data.isAssociation]);
 
 	const handleExpansionClick = async (e: React.MouseEvent) => {

@@ -120,10 +120,20 @@ export function InfoPanel(props: InfoPanelProps) {
 				currentNodes.filter(node => node.pmId !== selectedDescendantNode.pmId)
 			);
 
+			notifications.show({
+				title: 'Deassigned',
+				message: `Successfully deassigned "${selectedDescendantNode.name}" from "${props.rootNode.name}"`,
+				color: 'green',
+			});
+
 			// Clear selection since the node is no longer assigned
 			setSelectedDescendantNode(null);
 		} catch (error) {
-			console.error('Failed to deassign node:', error);
+			notifications.show({
+				title: 'Deassign Error',
+				message: (error as Error).message,
+				color: 'red',
+			});
 		}
 	}, [selectedDescendantNode, props.rootNode]);
 
@@ -184,6 +194,12 @@ export function InfoPanel(props: InfoPanelProps) {
 				props.rootNode.id
 			);
 			setAssociationRootNodes(updatedAssociations);
+
+			notifications.show({
+				color: 'green',
+				title: 'Assigned',
+				message: `Successfully assigned ${assignmentTargets.map(node => node.name).join(', ')} to "${props.rootNode.name}"`,
+			});
 
 		} catch (error) {
 			notifications.show({
@@ -449,6 +465,7 @@ export function InfoPanel(props: InfoPanelProps) {
 	const associationTreeProps = useMemo(() => ({
 		direction: "ascendants" as const,
 		rootNodes: associationRootNodes,
+		showSelectedNodeLabel: false,
 		showReset: true,
 		showTreeFilters: true,
 		showDirection: true,
@@ -497,7 +514,7 @@ export function InfoPanel(props: InfoPanelProps) {
 								>
 									<Popover.Target>
 										<Box style={{ display: 'inline-block' }}>
-											<Button size="xs" onClick={handleStartAssignment}>
+											<Button size="xs" variant="light" onClick={handleStartAssignment}>
 												Assign To
 											</Button>
 										</Box>
@@ -521,16 +538,6 @@ export function InfoPanel(props: InfoPanelProps) {
 												clickHandlers={{ onSelect: handleAssignmentPickerSelect }}
 											/>
 										</Box>
-										<Group gap="xs" p="xs" style={{ flexShrink: 0, borderTop: '1px solid var(--mantine-color-gray-2)', borderBottom: '1px solid var(--mantine-color-gray-2)', minHeight: 32 }}>
-											{pickingAssignmentNode ? (
-												<>
-													<NodeIcon type={pickingAssignmentNode.type} size={18} />
-													<Text size="xs" fw={500} style={{ flex: 1 }}>{pickingAssignmentNode.name}</Text>
-												</>
-											) : (
-												<Text size="xs" c="dimmed">No node selected</Text>
-											)}
-										</Group>
 										{assignmentTargets.length > 0 && (
 											<Box style={{ flexShrink: 0, borderBottom: '1px solid var(--mantine-color-gray-2)', padding: '4px 8px', maxHeight: 120, overflow: 'auto' }}>
 												<Stack gap={2}>
